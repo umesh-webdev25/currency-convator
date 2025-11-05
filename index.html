@@ -3,56 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currency Converter</title>
+    <title>Currency Converter Dashboard</title>
+    <meta name="description" content="Convert currencies with live exchange rates, interactive charts, and price tables powered by the Frankfurter API.">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-
-    <!-- Navbar -->
     <nav class="navbar">
-        <h1><i class="fa-solid fa-coins"></i> Currency Converter</h1>
-        <p>Convert currencies in real-time with live exchange rates</p>
+        <div class="nav-left">
+            <h1><i class="fa-solid fa-coins"></i> Currency Converter</h1>
+        </div>
+        <div class="nav-center">
+            <ul>
+                <li><a href="#converter-section" data-section="converter-section">Converter</a></li>
+                <li><a href="#live-chart-section" data-section="live-chart-section">Live Chart</a></li>
+                <li><a href="#price-section" data-section="price-section">Price</a></li>
+                <li><a href="#about-section" data-section="about-section">About</a></li>
+            </ul>
+        </div>
     </nav>
 
-    <!-- Main Converter -->
-    <div class="container">
-        <h2>Currency Converter</h2>
-        <form>
-            <div class="amount">
-                <p>Enter Amount</p>
-                <input type="text" value="100">
-            </div>
 
-            <div class="dropdown">
-                <div class="from">
-                    <p>From</p>
-                    <div class="select-container">
-                        <img src="https://flagsapi.com/US/flat/64.png" alt="">
-                        <select name="from" id="">
-                            <!-- Options will be added by JS -->
+        <section id="converter-section" class="content-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-eyebrow">Quick convert</span>
+                    <h2>Convert currencies instantly</h2>
+                    <p>Enter an amount, pick a base and a target currency, then press Convert to see the live exchange.</p>
+                </div>
+
+                <div class="converter-grid">
+                    <form class="converter-form">
+                        <div class="form-group">
+                            <label for="amount-input">Amount</label>
+                            <div class="input-wrapper">
+                                <input id="amount-input" type="number" value="1" min="0" step="any">
+                            </div>
+                        </div>
+
+                        <div class="form-group dropdown">
+                            <div class="control-group">
+                                <label for="from-currency">From</label>
+                                <div class="select-container">
+                                    <img src="" alt="From flag">
+                                    <select id="from-currency" class="currency-select converter-select" data-default="USD"></select>
+                                </div>
+                            </div>
+
+                            <div class="swap-wrapper">
+                                <button type="button" class="swap-button" aria-label="Swap currencies">
+                                    <i class="fa-solid fa-right-left"></i>
+                                </button>
+                            </div>
+
+                            <div class="control-group">
+                                <label for="to-currency">To</label>
+                                <div class="select-container">
+                                    <img src="" alt="To flag">
+                                    <select id="to-currency" class="currency-select converter-select" data-default="INR" data-compact="true"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="convert-btn">Convert now</button>
+
+                        <div class="conversion-output">
+                            <div class="msg">
+                                <span id="conversion-result">Enter values and convert</span>
+                                <span id="trend-arrow" class="trend-icon" style="display: none;"><i class="fa-solid fa-arrow-up"></i></span>
+                            </div>
+                            <div class="conversion-progress" id="conversion-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <span class="progress-text">Fetching rate...</span>
+                            </div>
+                            <p class="rate-updated">
+                                <i class="fa-solid fa-clock"></i> Last updated <span id="rate-updated-time">—</span>
+                                <span id="rate-source" class="muted"> (ECB via Frankfurter)</span>
+                            </p>
+                        </div>
+                    </form>
+
+                    <div class="conversion-summary">
+                        <div class="insights-card">
+                            <p class="summary-label">Conversion insights</p>
+                            <ul class="insights-list">
+                                <li><i class="fa-solid fa-clock-rotate-left"></i> Rates refresh automatically every few minutes.</li>
+                                <li><i class="fa-solid fa-bell"></i> Pin your favorite pairs in the chart and price boards.</li>
+                                <li><i class="fa-solid fa-chart-line"></i> Visit the live chart to understand longer-term trends.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="live-chart-section" class="content-section">
+            <div class="container chart-container">
+                <div class="section-header">
+                    <span class="section-eyebrow">Visualize trends</span>
+                    <h2>Interactive exchange rate chart</h2>
+                    <p>Select any two currencies and a timeframe to reveal how their exchange rate has evolved. Perfect for spotting trends before you exchange.</p>
+                </div>
+                <div class="chart-intro">
+                    <div class="chart-highlight">
+                        <span class="chart-live-pill"><i class="fa-solid fa-wave-square"></i> Live FX feed</span>
+                        <h3>Watch market momentum unfold</h3>
+                        <p>Track intraday highs, lows, and overall direction so you can decide when to convert with confidence.</p>
+                    </div>
+                    <div class="chart-meta">
+                        <div class="chart-meta-item">
+                            <i class="fa-solid fa-rotate"></i>
+                            <div>
+                                <h4>Auto refresh</h4>
+                                <p>Data updates every few minutes directly from the ECB feed.</p>
+                            </div>
+                        </div>
+                        <div class="chart-meta-item">
+                            <i class="fa-solid fa-chart-area"></i>
+                            <div>
+                                <h4>Deep history</h4>
+                                <p>Break down performance with up to one year of historical context.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-toolbar">
+                    <div class="chart-controls">
+                        <div class="control-group">
+                            <label for="chart-from-currency">Base</label>
+                            <select id="chart-from-currency" class="currency-select chart-select" data-default="USD">
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="chart-to-currency">Quote</label>
+                            <select id="chart-to-currency" class="currency-select chart-select" data-default="EUR">
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="chart-timeframe">Timeframe</label>
+                            <select id="chart-timeframe">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                                <option value="180">Last 6 months</option>
+                                <option value="365">Last 12 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-presets">
+                        <span class="preset-label">Quick ranges</span>
+                        <div class="chart-preset-buttons">
+                            <button type="button" class="chart-preset-btn" data-range="7">1W</button>
+                            <button type="button" class="chart-preset-btn active" data-range="30">1M</button>
+                            <button type="button" class="chart-preset-btn" data-range="90">3M</button>
+                            <button type="button" class="chart-preset-btn" data-range="180">6M</button>
+                            <button type="button" class="chart-preset-btn" data-range="365">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="exchangeRateChart"></canvas>
+                    <div class="chart-empty" id="chart-empty-state">Select two different currencies to view the trend.</div>
+                </div>
+                <div class="chart-insights">
+                    <div class="chart-stats-grid">
+                        <article class="chart-stat-card">
+                            <span class="stat-label">Range high</span>
+                            <h4 id="chart-stat-high">--</h4>
+                            <p class="stat-meta">Highest closing value within the selected window.</p>
+                        </article>
+                        <article class="chart-stat-card">
+                            <span class="stat-label">Range low</span>
+                            <h4 id="chart-stat-low">--</h4>
+                            <p class="stat-meta">Lowest point reached during this timeframe.</p>
+                        </article>
+                        <article class="chart-stat-card" id="chart-stat-change-card">
+                            <span class="stat-label">Net change</span>
+                            <h4 id="chart-stat-change">--</h4>
+                            <p class="stat-meta" id="chart-stat-change-meta" data-default="vs starting value">vs starting value</p>
+                        </article>
+                        <article class="chart-stat-card">
+                            <span class="stat-label">Average rate</span>
+                            <h4 id="chart-stat-avg">--</h4>
+                            <p class="stat-meta">Daily average across the selected range.</p>
+                        </article>
+                    </div>
+                    <aside class="chart-playbook">
+                        <h4>Chart playbook</h4>
+                        <ul>
+                            <li>Compare multiple ranges to confirm short-term momentum.</li>
+                            <li>Swap base and quote currencies to view the inverse trend instantly.</li>
+                            <li>Pair this chart with the live price board for cross-market validation.</li>
+                        </ul>
+                    </aside>
+                </div>
+                <p class="chart-footnote">Source: Frankfurter API (European Central Bank reference rates). Data refreshed automatically every few minutes.</p>
+            </div>
+        </section>
+
+        <section id="price-section" class="content-section">
+            <div class="container price-container">
+                <div class="section-header">
+                    <span class="section-eyebrow">Compare rates</span>
+                    <h2>Live global price board</h2>
+                    <p>Monitor the latest exchange rates for popular currencies relative to your base. Keep the table open during conversions to catch market movements.</p>
+                </div>
+                <div class="price-controls">
+                    <div class="price-left">
+                        <label for="price-base-currency">Base currency</label>
+                        <select id="price-base-currency" class="currency-select price-select" data-default="USD">
+                            <!-- Options populated by JavaScript -->
                         </select>
+                    </div>
+
+                    <div class="price-right">
+                        <div class="price-search">
+                            <label class="sr-only" for="price-search-input">Search currencies</label>
+                            <input id="price-search-input" type="search" placeholder="Search currency code or name">
+                        </div>
+                        <div class="view-toggle" role="tablist" aria-label="Price view toggle">
+                            <button type="button" class="view-btn active" data-view="table" title="Table view"><i class="fa-solid fa-table-cells"></i></button>
+                            <button type="button" class="view-btn" data-view="cards" title="Card view"><i class="fa-solid fa-grip-vertical"></i></button>
+                        </div>
                     </div>
                 </div>
 
-                <i class="fa-solid fa-right-left"></i>
+                <div class="table-wrapper">
+                    <table id="price-table">
+                        <thead>
+                            <tr>
+                                <th>Currency</th>
+                                <th>1 Base =</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">Select a base currency to load live prices.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                <div class="to">
-                    <p>To</p>
-                    <div class="select-container">
-                        <img src="https://flagsapi.com/IN/flat/64.png" alt="">
-                        <select name="to" id="">
-                            <!-- Options will be added by JS -->
-                        </select>
+                <!-- Alternate card grid for a more visual layout (toggled via UI) -->
+                <div id="price-card-grid" class="price-card-grid" hidden>
+                    <!-- Cards populated by JavaScript -->
+                </div>
+                <p class="price-footnote">Rates update every two minutes. Values are mid-market reference rates.</p>
+            </div>
+        </section>
+
+        <section id="about-section" class="content-section">
+            <div class="container about-container">
+                <div class="section-header">
+                    <span class="section-eyebrow">Behind the platform</span>
+                    <h2>Why people love using Currency Converter</h2>
+                    <p>We blend a premium design with trustworthy data so you can make smarter decisions wherever you are in the world.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <i class="fa-solid fa-globe feature-icon"></i>
+                        <h3>Worldwide coverage</h3>
+                        <p>Stay in the know across markets with daily updates from over 180 countries and territories.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fa-solid fa-chart-line feature-icon"></i>
+                        <h3>Insights that matter</h3>
+                        <p>Interactive charts reveal trends and volatility, helping you time your exchanges with confidence.</p>
+                    </article>
+                    <article class="feature-card">
+                        <i class="fa-solid fa-lock feature-icon"></i>
+                        <h3>Secure by design</h3>
+                        <p>Your preferences stay on your device. We never store personal data—privacy comes first.</p>
+                    </article>
+                </div>
+
+                <div class="testimonial-panel">
+                    <blockquote>
+                        <p>“The sleek dashboard and live analytics make this the only converter I trust when traveling for business.”</p>
+                    </blockquote>
+                    <div class="testimonial-meta">
+                        <span class="avatar">AR</span>
+                        <div>
+                            <p class="name">Aarav R.</p>
+                            <p class="role">Frequent flyer &amp; finance consultant</p>
+                        </div>
                     </div>
                 </div>
+
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h4>Where do the rates come from?</h4>
+                        <p>We source reference rates from the European Central Bank via the Frankfurter API, updated every working day.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>How often are prices refreshed?</h4>
+                        <p>The converter updates instantly. The live price board and chart refresh automatically every few minutes when active.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can I use this on mobile?</h4>
+                        <p>Absolutely. The experience is fully responsive, so you can convert currencies on phones, tablets, or desktops.</p>
+                    </div>
+                </div>
+
+                <div class="cta-card">
+                    <div>
+                        <h3>Ready to make your next exchange?</h3>
+                        <p>Jump back to the converter to get the latest rates or explore the live chart for deeper insights.</p>
+                    </div>
+                    <button type="button" class="btn-primary hero-action" data-section="converter-section">Launch converter</button>
+                </div>
             </div>
+        </section>
+    </main>
 
-            <div class="msg">1 USD = 86.72 INR</div>
-            <button type="button">Get Exchange Rate</button>
-        </form>
-    </div>
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <h3>Currency Converter</h3>
+                <p>Convert currencies with live exchange rates, interactive charts, and price tables powered by the Frankfurter API.</p>
+            </div>
+            <div class="footer-center">
+                <ul class="footer-links">
+                    <li><a href="#converter-section">Converter</a></li>
+                    <li><a href="#live-chart-section">Live Chart</a></li>
+                    <li><a href="#price-section">Price</a></li>
+                    <li><a href="#about-section">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <p>&copy; 2025 Currency Converter. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="codes.js"></script>
     <script src="script.js"></script>
 </body>
